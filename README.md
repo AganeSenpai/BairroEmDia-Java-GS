@@ -6,7 +6,7 @@ Joao Vitor Valaitis Paulo RM:576724
 
 ## Pitch
 
-Link a adicionar após a gravação.
+https://youtu.be/IfjnzYmmSD0
 
 ## Como executar
 

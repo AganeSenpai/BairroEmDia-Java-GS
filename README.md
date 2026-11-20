@@ -1,14 +1,16 @@
 # Bairro em Dia
 
-API CitizenTech para moradores registrarem problemas de zeladoria urbana e acompanharem o atendimento. Gestores administram categorias e atualizam status e prioridade.
+## Integrante
 
-## Integrante e pitch
+Joao Vitor Valaitis Paulo RM:576724
 
-Nome, RM e turma a preencher. Link do pitch a adicionar após a gravação.
+## Pitch
 
-## Executar
+Link a adicionar após a gravação.
 
-Requisitos locais: JDK 21 e Maven 3.9+.
+## Como executar
+
+Requisitos: JDK 21 e Maven 3.9 ou superior.
 
 ```bash
 mvn clean package
@@ -17,16 +19,18 @@ java -jar target/bairro-em-dia-1.0.0.jar
 
 Swagger: http://localhost:8080/swagger-ui.html
 
-O perfil local usa H2 em arquivo e preserva os dados em `data/`. Para PostgreSQL e Docker, copie `.env.example` para `.env`, substitua os valores e execute `docker compose up -d --build`.
+O perfil local usa H2 em arquivo, com os dados armazenados em `data/`.
 
-| Papel | E-mail local | Senha fictícia local |
+## Usuários de teste
+
+| Papel | E-mail | Senha local |
 |---|---|---|
 | GESTOR | gestor@bairro.test | GestorDemo123! |
 | CIDADAO | cidadao@bairro.test | CidadaoDemo123! |
 
-Faça login em `POST /api/auth/login`, copie `accessToken` e use **Authorize** no Swagger. O cadastro público cria cidadãos.
+Faça login em `POST /api/auth/login` e informe o `accessToken` em **Authorize** no Swagger.
 
-## Entidades
+## Diagrama das entidades
 
 ```mermaid
 erDiagram
@@ -34,20 +38,13 @@ erDiagram
     CATEGORIAS ||--o{ SOLICITACOES : classifica
 ```
 
-Solicitações têm autor e categoria obrigatórios, com `ManyToOne`, `LAZY` e chaves estrangeiras. A remoção de uma solicitação preserva seu autor e sua categoria. DTOs controlam os dados de entrada e saída. `@Version` trata alterações concorrentes.
+Cada solicitação possui um autor e uma categoria obrigatórios, com `ManyToOne`, `LAZY` e chaves estrangeiras. Não há remoção em cascata: excluir uma solicitação preserva o usuário e a categoria.
 
-## Consultas
+## Justificativa das consultas
 
 | Tipo | Uso e justificativa |
 |---|---|
-| Query method | `findByEmail` para login, `countByCidadaoIdAndStatus` para contagem e `existsByCategoriaId` para verificar vínculos |
-| JPQL | `contarPorStatus` agrega o resumo com filtro opcional de autor |
-| Specification | Combina autor, categoria, status e título com paginação e ordenação |
+| Query method | `findByEmail` localiza o usuário no login; `countByCidadaoIdAndStatus` realiza contagens por cidadão e status; `existsByCategoriaId` verifica vínculos antes de excluir uma categoria. |
+| JPQL | `contarPorStatus` agrupa as solicitações por status, com filtro opcional de autor, para gerar o resumo. |
+| Specification | Combina filtros de autor, categoria, status e título, com paginação e ordenação, sem criar uma consulta para cada combinação. |
 
-O cidadão consulta suas próprias solicitações. O gestor consulta todas. Cache e Actuator foram dispensados conforme a orientação informada da disciplina.
-
-## Instruções complementares
-
-- [Endpoints e regras de negócio](docs/JAVA.md)
-- [Azure, Docker e demonstração](docs/DEVOPS.md)
-- [Índice das evidências](docs/evidencias/README.md)
